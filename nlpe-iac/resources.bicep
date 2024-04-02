@@ -6,7 +6,6 @@ param github_repo_branch string = 'main'
 param staticwebsite_name string = 'nlp-explorer'
 param staticwebsite_sku_name string = 'Free'
 param staticwebsite_sku_tier string = 'Free'
-param custom_domains array = ['nlpe.statlab.it', 'www.nlpe.statlab.it']
 
 resource staticwebsite_resource 'Microsoft.Web/staticSites@2023-01-01' = {
   name: staticwebsite_name
@@ -33,8 +32,6 @@ resource staticwebsite_basicauth 'Microsoft.Web/staticSites/basicAuth@2023-01-01
   }
 }
 
-resource staticwebsite_customdomains 'Microsoft.Web/staticSites/customDomains@2023-01-01' = [for domain in custom_domains: {
-  parent: staticwebsite_resource
-  name: domain
-  properties: {}
-}]
+#disable-next-line outputs-should-not-contain-secrets
+output staticwebsite_token string = staticwebsite_resource.listSecrets().properties.apiKey
+output staticwebsite_hostname string = staticwebsite_resource.properties.defaultHostname
